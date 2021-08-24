@@ -43,6 +43,12 @@ get_cpu() {
     echo -e $cpu
 }
 
+get_mem(){
+    mem_used="$(free -h | awk '/Mem/ {print $3}')"
+    mem_total="$(free -h | awk '/Mem/ {print $2}')"
+    echo -e "$mem_used / $mem_total"
+}
+
 echo "-------------------------------------------"
 echo -e "Date:${YELLOW} $(date) ${NC}"
 echo "-------------------------------------------"
@@ -55,6 +61,7 @@ echo -e "${LGREEN}Shell:${NC} $(get_shell)"
 echo "-------------------------------------------"
 # CPU, RAM, Storage
 echo -e "${LGREEN}CPU:${NC} $(get_cpu)"
+echo -e "${LGREEN}RAM:${NC} $(get_mem)"
 echo "-------------------------------------------"
 # Network info (IP/netmask, DHCP, DNS)
 
