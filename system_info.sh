@@ -34,7 +34,7 @@ get_shell() {
 }
 
 get_cpu() {
-    cpu_raw="$(cat /proc/cpuinfo | grep "model name" | head -n 1)"
+    cpu_raw="$(grep "model name" /proc/cpuinfo | head -n 1)"
     cpu=${cpu_raw:13}   
     cpu="${cpu//(TM)}"
     cpu="${cpu//(tm)}"
@@ -43,10 +43,26 @@ get_cpu() {
     echo -e $cpu
 }
 
-get_mem(){
+get_mem() {
     mem_used="$(free -h | awk '/Mem/ {print $3}')"
     mem_total="$(free -h | awk '/Mem/ {print $2}')"
     echo -e "$mem_used / $mem_total"
+}
+
+get_ip() {
+    # NetworkManager is daemon for nmcli
+    # If active, use to get ip + netmask
+    if [[ "$(systemctl is-active NetworkManager)" == "active" ]]; then
+        ip="$(nmcli | grep inet4 | awk '{print $2}')"
+    else
+        # This gets the source IP but not w/ CIDR notation netmask
+        # Pipe to xargs to get rid of whitespace
+        addr="$(ip route get 1.2.3.4 | awk '{print $7}' | xargs)"
+
+        # Use ip a w/ addr to get full ip + netmask
+        ip="$(ip a | grep "$addr" | awk '{print $2}')"
+    fi
+    echo -e $ip
 }
 
 echo "-------------------------------------------"
@@ -59,9 +75,10 @@ echo -e "${LGREEN}Chassis:${NC} $(get_chassis)"
 echo -e "${LGREEN}Kernel:${NC} $(uname -r)"
 echo -e "${LGREEN}Shell:${NC} $(get_shell)"
 echo "-------------------------------------------"
-# CPU, RAM, Storage
 echo -e "${LGREEN}CPU:${NC} $(get_cpu)"
-echo -e "${LGREEN}RAM:${NC} $(get_mem)"
+echo -e "${LGREEN}RAM (used/total):${NC} $(get_mem)"
+# not getting storage as partitions vary widely on systems
+# inaccurate to assume /dev/sda1 is primary parition on all devices
+echo -e "${LGREEN}IP:${NC} $(get_ip)"
 echo "-------------------------------------------"
-# Network info (IP/netmask, DHCP, DNS)
 
