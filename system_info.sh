@@ -29,8 +29,8 @@ get_chassis() {
 get_shell() {
     shell_path="$(echo $SHELL)"
     shell_name="${shell_path##*/}"
-    shell="$($shell_name --version)"
-    echo $shell | head -n 1
+    shell="$($shell_name --version | head -n 1)"
+    echo -e $shell
 }
 
 get_cpu() {
