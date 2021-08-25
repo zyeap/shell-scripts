@@ -36,6 +36,7 @@ get_shell() {
 get_cpu() {
     cpu_raw="$(grep "model name" /proc/cpuinfo | head -n 1)"
     cpu=${cpu_raw:13}   
+    # Remove unecessary text from cpu name
     cpu="${cpu//(TM)}"
     cpu="${cpu//(tm)}"
     cpu="${cpu//(R)}"
@@ -74,7 +75,6 @@ echo -e "${LGREEN}OS:${NC} $(get_os)"
 echo -e "${LGREEN}Chassis:${NC} $(get_chassis)"
 echo -e "${LGREEN}Kernel:${NC} $(uname -r)"
 echo -e "${LGREEN}Shell:${NC} $(get_shell)"
-echo "-------------------------------------------"
 echo -e "${LGREEN}CPU:${NC} $(get_cpu)"
 echo -e "${LGREEN}RAM (used/total):${NC} $(get_mem)"
 # not getting storage as partitions vary widely on systems
