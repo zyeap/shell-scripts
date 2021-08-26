@@ -2,6 +2,7 @@
 
 # YouTube to mp3 downloader script
 # Requires youtube-dl and ffmpeg 
+# Example usage: ./yt2mp3.sh "https://www.youtube.com/watch?v=AOFnLntygwE"
 
 URL=$1
 
